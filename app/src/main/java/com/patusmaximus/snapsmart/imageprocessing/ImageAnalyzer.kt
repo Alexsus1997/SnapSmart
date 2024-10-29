@@ -6,6 +6,8 @@ import android.net.Uri
 import android.os.Parcel
 import android.os.Parcelable
 import android.provider.DocumentsContract
+import androidx.documentfile.provider.DocumentFile
+import com.patusmaximus.snapsmart.model.blurModelType
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import org.tensorflow.lite.Interpreter
@@ -60,17 +62,17 @@ class ImageAnalyzer(context: Context) {
         val score = output[0].indices.maxByOrNull { output[0][it] } ?: -1
 
         val label = when (score) {
-            0 -> "DEFOCUSED BLUR"
-            1 -> "MOTION BLUR"
-            2 -> "SHARP"
-            else -> "UNKNOWN"
+            0 -> blurModelType.DEFOCUSED_BLUR
+            1 -> blurModelType.MOTION_BLUR
+            2 -> blurModelType.SHARP
+            else -> blurModelType.ERROR
         }
 
         // Calculate initial score of 10, deducting points based on the label
         val calculatedScore = when (label) {
-            "DEFOCUSED BLUR" -> 2
-            "MOTION BLUR" -> 5
-            "SHARP" -> 10
+            blurModelType.DEFOCUSED_BLUR -> 2
+            blurModelType.MOTION_BLUR -> 5
+            blurModelType.SHARP -> 10
             else -> 0
         }
 
@@ -174,42 +176,48 @@ class ImageAnalyzer(context: Context) {
         results
     }
 
-    fun handleSelectedImages(selectedImages: List<ImageScanResult>, destinationFolderUri: Uri?) {
-        val contentResolver = this.contentResolver
-
-        selectedImages.forEach { image ->
+    fun handleSelectedImages(context: Context, selectedImages: List<ImageScanResult>, deleteImages: List<ImageScanResult>, destinationFolderUri: Uri?, sourceFolderUri: Uri?) {
+        // Delete not selected images
+        deleteImages.forEach { image ->
             val imageUri = Uri.parse(image.uriString)
+            deleteImage(context, imageUri)
+        }
 
-            if (destinationFolderUri != null) {
-                // Move image to destination folder
-                moveImage(contentResolver, imageUri, destinationFolderUri)
-            } else {
-                // Delete image if not selected
-                deleteImage(contentResolver, imageUri)
+        // Move selected images (if destination folder URI is provided)
+        if (destinationFolderUri != null) {
+            selectedImages.forEach { image ->
+                val imageUri = Uri.parse(image.uriString)
+                moveImage(context, imageUri, destinationFolderUri)
             }
         }
     }
 
-    private fun moveImage(contentResolver: ContentResolver, imageUri: Uri, destinationFolderUri: Uri) {
-        // Extract the file name from the URI
-        val documentId = DocumentsContract.getDocumentId(imageUri)
-        val fileName = documentId.substringAfterLast(":")
-        val destinationUri = Uri.withAppendedPath(destinationFolderUri, fileName)
 
-        // Use a simple copy and delete approach
-        contentResolver.openInputStream(imageUri)?.use { inputStream ->
-            contentResolver.openOutputStream(destinationUri)?.use { outputStream ->
-                inputStream.copyTo(outputStream)
+    private fun moveImage(context: Context, imageUri: Uri, destinationFolderUri: Uri) {
+        val documentFile = DocumentFile.fromSingleUri(context, imageUri)
+        val destinationFolder = DocumentFile.fromTreeUri(context, destinationFolderUri)
+
+        if (documentFile != null && documentFile.exists() && destinationFolder != null && destinationFolder.isDirectory && destinationFolder.canWrite()) {
+            val fileName = documentFile.name ?: return
+            val destinationFile = destinationFolder.createFile("image/*", fileName)
+
+            context.contentResolver.openInputStream(imageUri)?.use { inputStream ->
+                context.contentResolver.openOutputStream(destinationFile!!.uri)?.use { outputStream ->
+                    inputStream.copyTo(outputStream)
+                }
             }
-        }
 
-        // After copying, delete the original file
-        deleteImage(contentResolver, imageUri)
+            deleteImage(context, imageUri)
+        }
     }
 
-    private fun deleteImage(contentResolver: ContentResolver, imageUri: Uri) {
-        // Delete the file using the content resolver
-        contentResolver.delete(imageUri, null, null)
+
+
+    private fun deleteImage(context: Context, imageUri: Uri) {
+        val documentFile = DocumentFile.fromSingleUri(context, imageUri)
+        if (documentFile != null && documentFile.exists() && documentFile.canWrite()) {
+            documentFile.delete()
+        }
     }
 }
 
@@ -227,7 +235,7 @@ data class FolderScanResult(
 data class ImageScanResult(
     val imageName: String,
     val score: Int,
-    val label: String,
+    val label: blurModelType,
     val uriString: String,
     val calculatedScore: Int,
     var selected: Boolean = false
@@ -235,7 +243,7 @@ data class ImageScanResult(
     constructor(parcel: Parcel) : this(
         parcel.readString() ?: "",
         parcel.readInt(),
-        parcel.readString() ?: "",
+        parcel.readSerializable() as? blurModelType ?: blurModelType.ERROR,
         parcel.readString() ?: "",
         parcel.readInt()
     )
@@ -243,7 +251,7 @@ data class ImageScanResult(
     override fun writeToParcel(parcel: Parcel, flags: Int) {
         parcel.writeString(imageName)
         parcel.writeInt(score)
-        parcel.writeString(label)
+        parcel.writeSerializable(label)
         parcel.writeString(uriString)
         parcel.writeInt(calculatedScore)
     }

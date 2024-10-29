@@ -87,20 +87,20 @@
         android:gravity="center">
 
         <Button
-            android:id="@+id/proceedButton"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="Proceed"
-            android:textColor="@android:color/white"
-            app:backgroundTint="@color/buttonColor" />
-
-        <Button
             android:id="@+id/cancelButton"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:text="Cancel"
+            android:textColor="@android:color/white"
+            app:backgroundTint="@color/buttonColor" />
+
+        <Button
+            android:id="@+id/proceedButton"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Save Selected Photos"
             android:textColor="@android:color/white"
             app:backgroundTint="@color/buttonColor" />
     </LinearLayout>

@@ -55,6 +55,11 @@ class PreScanPhotosActivity : AppCompatActivity() {
             intent.putExtra("selectedMovedFolderUri", selectedDestinationFolder)
             startActivity(intent)
         }
+
+        binding.cancelButton.setOnClickListener {
+            // Handle cancel button click
+            finish()
+        }
     }
 
     private suspend fun scanAndUpdateUI(folderUri: Uri) {

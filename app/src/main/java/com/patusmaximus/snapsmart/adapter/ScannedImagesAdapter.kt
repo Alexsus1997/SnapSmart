@@ -5,15 +5,17 @@ import android.content.Context
 import android.graphics.BitmapFactory
 import android.graphics.Color
 import android.net.Uri
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.CheckBox
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.RecyclerView
 import com.patusmaximus.snapsmart.R
+import com.patusmaximus.snapsmart.fragment.ImagePopupDialogFragment
+import com.patusmaximus.snapsmart.model.blurModelType
 
 class ScannedImagesAdapter(
     private val context: Context,
@@ -42,7 +44,7 @@ class ScannedImagesAdapter(
         }
 
         // Set other UI elements
-        holder.labelTextView.text = imageResult.label
+        holder.labelTextView.text = imageResult.label.toString()
         holder.imageNameTextView.text = imageResult.imageName
         holder.imageScoreTextView.text = imageResult.calculatedScore.toString()
 
@@ -61,8 +63,17 @@ class ScannedImagesAdapter(
             val bitmap = BitmapFactory.decodeStream(inputStream, null, options)
             holder.imageThumbnail.setImageBitmap(bitmap)
         }
-    }
 
+        // Click listener to show full-size image in a popup
+        holder.imageThumbnail.setOnClickListener {
+            val activity = context as AppCompatActivity
+            val reason = if (imageResult.label == blurModelType.SHARP) "Recommended: Sharp Image" else "Not Recommended: ${imageResult.label}"
+            val dialogFragment = ImagePopupDialogFragment.newInstance(
+                imageResult.uriString, imageResult.imageName, reason
+            )
+            dialogFragment.show(activity.supportFragmentManager, "ImagePopupDialog")
+        }
+    }
 
     override fun getItemCount() = scannedImages.size
 }

@@ -2,9 +2,11 @@ package com.patusmaximus.snapsmart
 
 import ImageAnalyzer
 import ImageScanResult
+import android.content.DialogInterface
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
 import com.patusmaximus.snapsmart.databinding.ActivityScanPhotosBinding
@@ -29,6 +31,25 @@ class ScanPhotosActivity : AppCompatActivity() {
         selectedFolderUri?.let {
             startImageProcessing(Uri.parse(it))
         }
+
+        binding.cancelButton.setOnClickListener {
+            showCancelConfirmationDialog()
+        }
+    }
+
+    private fun showCancelConfirmationDialog() {
+        AlertDialog.Builder(this)
+            .setTitle("Cancel Scanning")
+            .setMessage("Are you sure you want to cancel the scanning process?")
+            .setPositiveButton("Yes") { dialog, _ ->
+                dialog.dismiss()
+                finish() // End the activity if the user confirms
+            }
+            .setNegativeButton("No") { dialog, _ ->
+                dialog.dismiss() // Dismiss the dialog if the user declines
+            }
+            .create()
+            .show()
     }
 
     private fun startImageProcessing(folderUri: Uri) {
