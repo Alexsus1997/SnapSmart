@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/activity_scan_photos"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".activity.scan.ScanPhotosActivity"
+    android:padding="16dp"
+    android:background="@color/appBackground">
+
+    <!-- Circular Progress -->
+    <com.google.android.material.progressindicator.CircularProgressIndicator
+        android:id="@+id/circularProgressIndicator"
+        android:layout_width="261dp"
+        android:layout_height="261dp"
+        android:indeterminate="false"
+        android:rotation="-90"
+        app:indicatorColor="#279cc0"
+        app:trackColor="#cbe8ef"
+        app:indicatorSize="200dp"
+        app:trackThickness="15dp"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="32dp" />
+
+    <TextView
+        android:id="@+id/progressPercentageText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="0%"
+        android:textSize="24sp"
+        android:textColor="#279cc0"
+        app:layout_constraintTop_toTopOf="@+id/circularProgressIndicator"
+        app:layout_constraintBottom_toBottomOf="@+id/circularProgressIndicator"
+        app:layout_constraintStart_toStartOf="@+id/circularProgressIndicator"
+        app:layout_constraintEnd_toEndOf="@+id/circularProgressIndicator" />
+
+
+    <!-- Progress bar under the circular one -->
+    <ProgressBar
+        android:id="@+id/horizontalProgressBar"
+        style="?android:attr/progressBarStyleHorizontal"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:indeterminate="false"
+        android:max="100"
+        android:progressTint="#279cc0"
+        android:progressBackgroundTint="#cbe8ef"
+        app:layout_constraintTop_toBottomOf="@id/circularProgressIndicator"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintWidth_percent="0.8"
+        android:layout_marginTop="20dp" />
+
+    <!-- TextView to show the current image being processed -->
+
+
+    <TextView
+        android:id="@+id/staticTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Processing Image:"
+        android:textColor="@android:color/black"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        android:textAlignment="center"
+        app:layout_constraintTop_toBottomOf="@id/horizontalProgressBar"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="32dp" />
+
+    <TextView
+        android:id="@+id/dynamicImageNameTextView"
+        android:text="Image Name"
+        android:textColor="@android:color/black"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="18sp"
+        android:textAlignment="center"
+        app:layout_constraintTop_toBottomOf="@id/staticTextView"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+
+    <!-- Cancel button -->
+    <Button
+        android:id="@+id/cancelButton"
+        app:backgroundTint="@color/buttonColor"
+        android:layout_width="124dp"
+        android:layout_height="wrap_content"
+        android:text="Cancel"
+        android:textColor="@android:color/white"
+        app:layout_constraintTop_toBottomOf="@id/dynamicImageNameTextView"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="64dp" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

@@ -1,0 +1,273 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/activity_prescan_photos"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="16dp"
+    android:background="#cbe8ef">
+
+    <!-- Spacer to push content slightly down -->
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="0.2" />
+
+    <!-- Top section: Selected Folder and 2x2 photo grid -->
+    <GridLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:columnCount="2"
+        android:background="@color/alt1"
+        android:padding="10dp">
+
+        <!-- Left: Selected Folder TextView -->
+        <GridLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_columnWeight="1"
+            android:columnCount="1"
+            android:rowCount="2"
+            android:padding="18dp">
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_columnWeight="1"
+                android:gravity="center"
+                android:textColor="@android:color/black"
+                android:text="Selected Folder:"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/selectedFolderTextView"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_columnWeight="1"
+                android:gravity="center"
+                android:textColor="@android:color/black"
+                android:text="None"
+                />
+
+        </GridLayout>
+
+        <!-- Right: 2x2 Image Grid -->
+        <GridLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_columnWeight="1"
+            android:columnCount="2"
+            android:padding="18dp"
+            android:rowCount="2">
+
+            <!-- First Row, First Image -->
+            <ImageView
+                android:id="@+id/imagePreview1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:scaleType="centerCrop"
+                android:src="@mipmap/botlogo" />
+
+            <!-- First Row, Second Image -->
+            <ImageView
+                android:id="@+id/imagePreview2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:scaleType="centerCrop"
+                android:src="@mipmap/botlogo" />
+
+            <!-- Second Row, First Image -->
+            <ImageView
+                android:id="@+id/imagePreview3"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:scaleType="centerCrop"
+                android:src="@mipmap/botlogo" />
+
+            <!-- Second Row, Second Image -->
+            <ImageView
+                android:id="@+id/imagePreview4"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:scaleType="centerCrop"
+                android:src="@mipmap/botlogo" />
+        </GridLayout>
+    </GridLayout>
+
+    <!-- Spacer to push the middle section closer to center -->
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="0.1" />
+
+    <!-- Middle Section: Info Grid -->
+    <GridLayout
+        android:id="@+id/infoGrid"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:columnCount="2"
+        android:padding="8dp"
+        android:rowCount="4">
+
+        <!-- First row: Title and Value -->
+        <TextView
+            android:textStyle="bold"
+            android:text="Number of Photos"
+            android:textColor="@android:color/black"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_columnWeight="1" />
+
+        <TextView
+            android:id="@+id/photoCountTextView"
+            android:text="0"
+            android:textColor="@android:color/black"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_columnWeight="1" />
+
+        <!-- Second row: Title and Value -->
+        <TextView
+            android:textStyle="bold"
+            android:text="Estimated Processing Time"
+            android:layout_width="0dp"
+            android:textColor="@android:color/black"
+            android:layout_height="wrap_content"
+            android:layout_columnWeight="1" />
+
+        <TextView
+            android:id="@+id/processingTimeTextView"
+            android:text="0 min"
+            android:textColor="@android:color/black"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_columnWeight="1" />
+
+        <!-- Third row: Checkbox and Button -->
+        <TextView
+            android:textStyle="bold"
+            android:text="Move Images to different folder?"
+            android:textColor="@android:color/black"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_columnWeight="1" />
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_columnWeight="1"
+            android:orientation="horizontal">
+
+            <CheckBox
+                android:id="@+id/moveImagesCheckBox"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+
+            <Button
+                android:id="@+id/selectFolderButton"
+                app:backgroundTint="@color/buttonColor"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Select Folder"
+                android:enabled="false" />
+        </LinearLayout>
+
+        <!-- Fourth row: Delete Photos Option -->
+        <TextView
+            android:textStyle="bold"
+            android:text="Delete Not Recommended Photos?"
+            android:textColor="@android:color/black"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_columnWeight="1" />
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_columnWeight="1"
+            android:orientation="horizontal">
+
+            <CheckBox
+                android:id="@+id/deleteNotRecommendedPhotosCheckbox"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+        </LinearLayout>
+
+
+    </GridLayout>
+
+    <!-- Move To Folder Section -->
+    <GridLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:columnCount="1"
+        android:padding="10dp"
+        android:layout_marginTop="16dp">
+
+        <!-- Left: Selected Move To Folder TextView -->
+        <GridLayout
+            android:id="@+id/destinationFolderGrid"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_columnWeight="1"
+            android:columnCount="1"
+            android:rowCount="2"
+            android:padding="18dp"
+            android:background="@color/alt1"
+            android:visibility="invisible">
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_columnWeight="1"
+                android:gravity="center"
+                android:text="Selected Destination Folder:"
+                android:textColor="@android:color/black"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/selectedDestinationFolderTextView"
+                android:textColor="@android:color/black"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_columnWeight="1"
+                android:gravity="center"
+                android:text="None"
+                />
+
+        </GridLayout>
+    </GridLayout>
+
+
+    <!-- Spacer to push buttons to bottom -->
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="0.3" />
+
+    <!-- Bottom section: Buttons -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center"
+        android:layout_marginTop="16dp">
+
+        <Button
+            android:id="@+id/cancelButton"
+            app:backgroundTint="@color/buttonColor"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@android:color/white"
+            android:text="Cancel" />
+
+        <Button
+            android:id="@+id/proceedButton"
+            app:backgroundTint="@color/buttonColor"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@android:color/white"
+            android:text="Scan Folder"
+            android:layout_marginLeft="16dp" />
+    </LinearLayout>
+
+</LinearLayout>

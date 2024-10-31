@@ -37,7 +37,7 @@ class ImagePopupDialogFragment : DialogFragment() {
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        val view = inflater.inflate(R.layout.dialog_image_popup, container, false)
+        val view = inflater.inflate(R.layout.dialog_scan_image_popup, container, false)
 
         // Retrieve arguments
         imageUri = arguments?.getString("imageUri") ?: ""
