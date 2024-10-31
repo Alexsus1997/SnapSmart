@@ -8,19 +8,19 @@ import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
-import com.patusmaximus.snapsmart.databinding.ActivityPrescanPhotosBinding
+import com.patusmaximus.snapsmart.databinding.ActivityScanPrescanPhotosBinding
 import com.patusmaximus.snapsmart.imageprocessing.model.UserScanPreferences
 import kotlinx.coroutines.launch
 
 class PreScanPhotosActivity : AppCompatActivity() {
-    private lateinit var binding: ActivityPrescanPhotosBinding
+    private lateinit var binding: ActivityScanPrescanPhotosBinding
     private var userScanPreferences: UserScanPreferences? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
         // Initialize binding
-        binding = ActivityPrescanPhotosBinding.inflate(layoutInflater)
+        binding = ActivityScanPrescanPhotosBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
         // Retrieve User Scan Preferences from Intent

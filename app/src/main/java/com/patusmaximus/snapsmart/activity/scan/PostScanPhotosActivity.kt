@@ -1,21 +1,27 @@
 package com.patusmaximus.snapsmart.activity.scan
 
 import ImageAnalyzer
+import android.app.Dialog
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
+import android.view.Window
+import android.view.WindowManager
+import android.widget.Button
+import android.widget.TextView
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.GridLayoutManager
+import com.patusmaximus.snapsmart.R
 import com.patusmaximus.snapsmart.activity.MainActivity
 import com.patusmaximus.snapsmart.adapter.ScannedImagesAdapter
-import com.patusmaximus.snapsmart.databinding.ActivityPostscanPhotosBinding
+import com.patusmaximus.snapsmart.databinding.ActivityScanPostscanPhotosBinding
 import com.patusmaximus.snapsmart.imageprocessing.model.ImageScanResult
 import com.patusmaximus.snapsmart.imageprocessing.model.UserScanPreferences
 import com.patusmaximus.snapsmart.model.blurModelType
 
 class PostScanPhotosActivity : AppCompatActivity() {
-    private lateinit var binding: ActivityPostscanPhotosBinding
+    private lateinit var binding: ActivityScanPostscanPhotosBinding
     private val recommendedImages = mutableListOf<ImageScanResult>()
     private val notRecommendedImages = mutableListOf<ImageScanResult>()
     private var userScanPreference: UserScanPreferences? = null
@@ -26,7 +32,7 @@ class PostScanPhotosActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
 
         imageAnalyzer = ImageAnalyzer(this)
-        binding = ActivityPostscanPhotosBinding.inflate(layoutInflater)
+        binding = ActivityScanPostscanPhotosBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
         imageScanResults = intent.getParcelableArrayListExtra<ImageScanResult>("imagesScanResult")
@@ -62,11 +68,8 @@ class PostScanPhotosActivity : AppCompatActivity() {
             // Call the handleSelectedImages function process images
             imageAnalyzer.handleSelectedImages(this, selectedImages, notSelectedImages, userScanPreference)
 
-            // Redirect to MainActivity after processing
-            val intent = Intent(this, MainActivity::class.java)
-            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_NEW_TASK)
-            startActivity(intent)
-            finish()
+            // Display summary of scan
+            showSummaryDialog(selectedImages.size + notSelectedImages.size, selectedImages.size, notSelectedImages.size, userScanPreference?.sourceFolder, userScanPreference?.destinationFolder)
         }
 
         binding.cancelButton.setOnClickListener {
@@ -102,4 +105,53 @@ class PostScanPhotosActivity : AppCompatActivity() {
             .create()
             .show()
     }
+
+    private fun showSummaryDialog(
+        processedCount: Int,
+        movedCount: Int,
+        deletedCount: Int,
+        sourceFolderUri: Uri?,
+        targetFolderUri: Uri?
+    ) {
+        val dialog = Dialog(this)
+        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
+        dialog.setContentView(R.layout.dialog_scan_scan_summary)
+
+        dialog.window?.setBackgroundDrawableResource(android.R.color.transparent)
+        dialog.window?.setLayout(
+            WindowManager.LayoutParams.WRAP_CONTENT,
+            WindowManager.LayoutParams.WRAP_CONTENT
+        )
+        dialog.window?.setGravity(android.view.Gravity.CENTER)
+
+
+        val processedValue: TextView = dialog.findViewById(R.id.processedImagesValue)
+        val movedValue: TextView = dialog.findViewById(R.id.movedImagesValue)
+        val deletedValue: TextView = dialog.findViewById(R.id.deletedImagesValue)
+        val sourceFolderValue: TextView = dialog.findViewById(R.id.sourceFolderValue)
+        val targetFolderValue: TextView = dialog.findViewById(R.id.targetFolderValue)
+        val okButton: Button = dialog.findViewById(R.id.okButton)
+
+        // Set text for each dynamic value
+        processedValue.text = processedCount.toString()
+        movedValue.text = movedCount.toString()
+        deletedValue.text = deletedCount.toString()
+
+        sourceFolderValue.text = sourceFolderUri?.toString() ?: "N/A"
+        targetFolderValue.text = targetFolderUri?.toString() ?: "N/A"
+
+        // Dismiss dialog and navigate to MainActivity on OK click
+        okButton.setOnClickListener {
+            dialog.dismiss()
+
+            // Redirect to MainActivity
+            val intent = Intent(this, MainActivity::class.java)
+            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_NEW_TASK)
+            startActivity(intent)
+            finish()
+        }
+
+        dialog.show()
+    }
+
 }

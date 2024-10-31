@@ -7,18 +7,18 @@ import android.os.Bundle
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
-import com.patusmaximus.snapsmart.databinding.ActivityScanPhotosBinding
+import com.patusmaximus.snapsmart.databinding.ActivityScanScanPhotosBinding
 import com.patusmaximus.snapsmart.imageprocessing.model.UserScanPreferences
 import kotlinx.coroutines.launch
 
 class ScanPhotosActivity : AppCompatActivity() {
-    private lateinit var binding: ActivityScanPhotosBinding
+    private lateinit var binding: ActivityScanScanPhotosBinding
     private lateinit var imageAnalyzer: ImageAnalyzer
     private var userScanPreferences: UserScanPreferences? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        binding = ActivityScanPhotosBinding.inflate(layoutInflater)
+        binding = ActivityScanScanPhotosBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
         // Initialize ImageAnalyzer
