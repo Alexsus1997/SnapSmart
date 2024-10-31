@@ -1,8 +1,6 @@
-package com.patusmaximus.snapsmart
+package com.patusmaximus.snapsmart.activity.scan
 
 import ImageAnalyzer
-import ImageScanResult
-import android.content.DialogInterface
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
@@ -10,28 +8,35 @@ import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
 import com.patusmaximus.snapsmart.databinding.ActivityScanPhotosBinding
+import com.patusmaximus.snapsmart.imageprocessing.model.UserScanPreferences
 import kotlinx.coroutines.launch
 
 class ScanPhotosActivity : AppCompatActivity() {
     private lateinit var binding: ActivityScanPhotosBinding
     private lateinit var imageAnalyzer: ImageAnalyzer
-    private var selectedFolderUri: String? = null
-    private var selectedMovedFolderUri: String? = null
+    private var userScanPreferences: UserScanPreferences? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
         binding = ActivityScanPhotosBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
+        // Initialize ImageAnalyzer
         imageAnalyzer = ImageAnalyzer(this)
 
-        selectedFolderUri = intent.getStringExtra("selectedFolderUri")
-        selectedMovedFolderUri = intent.getStringExtra("selectedMovedFolderUri")
-        selectedFolderUri?.let {
-            startImageProcessing(Uri.parse(it))
-        }
+        // Retrieve User Scan Preferences from Intent
+        userScanPreferences = intent.getParcelableExtra("userScanPreferences")
 
+        // Set bindings
+        setBindings()
+
+        // Initialize Image Processing
+        userScanPreferences?.sourceFolder?.let {
+            startImageProcessing(it)
+        }
+    }
+
+    private fun setBindings() {
         binding.cancelButton.setOnClickListener {
             showCancelConfirmationDialog()
         }
@@ -66,10 +71,8 @@ class ScanPhotosActivity : AppCompatActivity() {
             }
 
             val intent = Intent(this@ScanPhotosActivity, PostScanPhotosActivity::class.java)
-            intent.putParcelableArrayListExtra("imageScanResults", ArrayList(imageScanResults))
-
-            selectedFolderUri?.let { intent.putExtra("selectedFolderUri", it) }
-            selectedMovedFolderUri?.let { intent.putExtra("selectedMovedFolderUri", it) }
+            intent.putExtra("userScanPreferences", userScanPreferences)
+            intent.putParcelableArrayListExtra("imagesScanResult", ArrayList(imageScanResults))
 
             startActivity(intent)
         }

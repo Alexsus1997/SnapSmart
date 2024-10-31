@@ -1,4 +1,4 @@
-package com.patusmaximus.snapsmart
+package com.patusmaximus.snapsmart.activity.scan
 
 import ImageAnalyzer
 import android.content.Intent
@@ -9,12 +9,12 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
 import com.patusmaximus.snapsmart.databinding.ActivityPrescanPhotosBinding
+import com.patusmaximus.snapsmart.imageprocessing.model.UserScanPreferences
 import kotlinx.coroutines.launch
 
 class PreScanPhotosActivity : AppCompatActivity() {
     private lateinit var binding: ActivityPrescanPhotosBinding
-    private var selectedFolderUri: String? = null
-    private var selectedDestinationFolder: String? = null
+    private var userScanPreferences: UserScanPreferences? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -23,23 +23,38 @@ class PreScanPhotosActivity : AppCompatActivity() {
         binding = ActivityPrescanPhotosBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
+        // Retrieve User Scan Preferences from Intent
+        userScanPreferences = intent.getParcelableExtra("userScanPreferences")
+
+        // Set up button actions
+        setBindings()
+
         // Get selected folder URI
-        selectedFolderUri = intent.getStringExtra("selectedFolderUri")
-        if (selectedFolderUri != null) {
-            val decodedUri = Uri.decode(selectedFolderUri)
+        if (userScanPreferences?.sourceFolder != null) {
+
+            val decodedUri = userScanPreferences?.sourceFolder.toString()
             val displayUri = decodedUri?.substringAfter("raw:/")
 
+            // Set the selected folder URI in the TextView
             binding.selectedFolderTextView.text = displayUri
 
             lifecycleScope.launch {
-                scanAndUpdateUI(Uri.parse(selectedFolderUri))
+                scanAndUpdateUI(Uri.parse(userScanPreferences?.sourceFolder.toString()))
             }
         }
+    }
 
+    private fun setBindings() {
         // Buttons and click listeners
         binding.moveImagesCheckBox.setOnCheckedChangeListener { _, isChecked ->
             binding.selectFolderButton.isEnabled = isChecked
             binding.proceedButton.isEnabled = !isChecked
+            binding.proceedButton.setTextColor(if (isChecked) resources.getColor(android.R.color.darker_gray) else resources.getColor(android.R.color.white))
+        }
+
+        binding.deleteNotRecommendedPhotosCheckbox.setOnCheckedChangeListener { _, isChecked ->
+            binding.proceedButton.isEnabled = isChecked
+            userScanPreferences?.deleteNotRecommendedPhotos = isChecked
         }
 
         binding.selectFolderButton.setOnClickListener {
@@ -51,8 +66,7 @@ class PreScanPhotosActivity : AppCompatActivity() {
         binding.proceedButton.setOnClickListener {
             val intent = Intent(this, ScanPhotosActivity::class.java)
 
-            intent.putExtra("selectedFolderUri", selectedFolderUri)
-            intent.putExtra("selectedMovedFolderUri", selectedDestinationFolder)
+            intent.putExtra("userScanPreferences", userScanPreferences)
             startActivity(intent)
         }
 
@@ -85,25 +99,26 @@ class PreScanPhotosActivity : AppCompatActivity() {
         super.onActivityResult(requestCode, resultCode, data)
 
         if (requestCode == 2 && resultCode == RESULT_OK) {
-            val uri = data?.data
+            val destinationFolderUri = data?.data
 
-            if (uri != null) {
+            if (destinationFolderUri != null) {
                 // Take persistable permission
                 contentResolver.takePersistableUriPermission(
-                    uri,
+                    destinationFolderUri,
                     Intent.FLAG_GRANT_READ_URI_PERMISSION or Intent.FLAG_GRANT_WRITE_URI_PERMISSION
                 )
 
                 // Compare if the selected moved folder is different from the selected folder
-                if (uri.toString() != selectedFolderUri) {
-                    selectedDestinationFolder = uri.toString()
-                    binding.selectedDestinationFolderTextView.text = uri.toString()
+                if (destinationFolderUri.toString() != userScanPreferences?.sourceFolder.toString()) {
+                    userScanPreferences?.destinationFolder = destinationFolderUri
+                    binding.selectedDestinationFolderTextView.text = destinationFolderUri.toString()
                     binding.destinationFolderGrid.visibility = View.VISIBLE
                     binding.proceedButton.isEnabled = true
+                    binding.proceedButton.setTextColor(resources.getColor(android.R.color.white))
 
                     // Save the moved folder URI in SharedPreferences if needed
                     val sharedPreferences = getSharedPreferences("SnapSmartPrefs", MODE_PRIVATE)
-                    sharedPreferences.edit().putString("selectedMovedFolderUri", selectedDestinationFolder).apply()
+                    sharedPreferences.edit().putString("selectedMovedFolderUri", destinationFolderUri.toString()).apply()
 
                 } else {
                     // Show a Toast if the selected folder is the same as the original folder

@@ -1,6 +1,5 @@
 package com.patusmaximus.snapsmart.adapter
 
-import ImageScanResult
 import android.content.Context
 import android.graphics.BitmapFactory
 import android.graphics.Color
@@ -15,6 +14,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.RecyclerView
 import com.patusmaximus.snapsmart.R
 import com.patusmaximus.snapsmart.fragment.ImagePopupDialogFragment
+import com.patusmaximus.snapsmart.imageprocessing.model.ImageScanResult
 import com.patusmaximus.snapsmart.model.blurModelType
 
 class ScannedImagesAdapter(
@@ -32,16 +32,15 @@ class ScannedImagesAdapter(
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ScannedImageViewHolder {
-        val view = LayoutInflater.from(context).inflate(R.layout.grid_image_item, parent, false)
+        val view = LayoutInflater.from(context).inflate(R.layout.adapter_scan_grid_image_item, parent, false)
         return ScannedImageViewHolder(view)
     }
 
     override fun onBindViewHolder(holder: ScannedImageViewHolder, position: Int) {
         val imageResult = scannedImages[position]
-        holder.selectCheckBox.isChecked = imageResult.selected
-        holder.selectCheckBox.setOnCheckedChangeListener { _, isChecked ->
-            imageResult.selected = isChecked
-        }
+
+        // Set bindings
+        setBindings(holder, imageResult)
 
         // Set other UI elements
         holder.labelTextView.text = imageResult.label.toString()
@@ -63,7 +62,12 @@ class ScannedImagesAdapter(
             val bitmap = BitmapFactory.decodeStream(inputStream, null, options)
             holder.imageThumbnail.setImageBitmap(bitmap)
         }
+    }
 
+    override fun getItemCount() = scannedImages.size
+
+    private fun setBindings(holder: ScannedImageViewHolder, imageResult: ImageScanResult)
+    {
         // Click listener to show full-size image in a popup
         holder.imageThumbnail.setOnClickListener {
             val activity = context as AppCompatActivity
@@ -73,7 +77,11 @@ class ScannedImagesAdapter(
             )
             dialogFragment.show(activity.supportFragmentManager, "ImagePopupDialog")
         }
-    }
 
-    override fun getItemCount() = scannedImages.size
+        // Set checkbox state and listener
+        holder.selectCheckBox.isChecked = imageResult.selected
+        holder.selectCheckBox.setOnCheckedChangeListener { _, isChecked ->
+            imageResult.selected = isChecked
+        }
+    }
 }

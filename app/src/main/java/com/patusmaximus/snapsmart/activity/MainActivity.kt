@@ -1,10 +1,14 @@
-package com.patusmaximus.snapsmart
+package com.patusmaximus.snapsmart.activity
 
+import com.patusmaximus.snapsmart.activity.bucketize.ViewCategoriesActivity
+import com.patusmaximus.snapsmart.activity.scan.PreScanPhotosActivity
+import com.patusmaximus.snapsmart.activity.settings.SettingsActivity
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import com.patusmaximus.snapsmart.databinding.ActivityMainBinding
+import com.patusmaximus.snapsmart.imageprocessing.model.UserScanPreferences
 
 class MainActivity : AppCompatActivity() {
 
@@ -23,10 +27,10 @@ class MainActivity : AppCompatActivity() {
             println("Using saved folder URI: $uri")
         }
 
-        initializeUI()
+        setBindings()
     }
 
-    private fun initializeUI() {
+    private fun setBindings() {
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
@@ -53,24 +57,26 @@ class MainActivity : AppCompatActivity() {
         super.onActivityResult(requestCode, resultCode, data)
 
         if (requestCode == REQUEST_CODE_PICK_FOLDER && resultCode == RESULT_OK) {
-            val uri = data?.data
-            if (uri != null) {
+            val sourceFolderUri = data?.data
+            if (sourceFolderUri != null) {
                 // Take persistable permission
                 contentResolver.takePersistableUriPermission(
-                    uri,
+                    sourceFolderUri,
                     Intent.FLAG_GRANT_READ_URI_PERMISSION or Intent.FLAG_GRANT_WRITE_URI_PERMISSION
                 )
 
                 // Save the URI in SharedPreferences
                 val sharedPreferences = getSharedPreferences("SnapSmartPrefs", MODE_PRIVATE)
-                sharedPreferences.edit().putString("selectedFolderUri", uri.toString()).apply()
+                sharedPreferences.edit().putString("selectedFolderUri", sourceFolderUri.toString()).apply()
 
                 // Use the saved URI in future access
-                println("Persisted folder URI: $uri")
+                println("Persisted folder URI: $sourceFolderUri")
 
                 // Launch Pre scan intent
                 val intent = Intent(this, PreScanPhotosActivity::class.java)
-                intent.putExtra("selectedFolderUri", uri.toString())
+
+                val userScanPreferences = UserScanPreferences(sourceFolderUri)
+                intent.putExtra("userScanPreferences", userScanPreferences)
                 startActivity(intent)
             }
         }
