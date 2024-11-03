@@ -8,6 +8,7 @@
 
     <TextView
         android:id="@+id/summaryTitle"
+        android:textColor="@color/black"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Scan Summary"
@@ -25,6 +26,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:textColor="@color/black"
             android:text="Images processed:"
             android:textStyle="bold"
             android:textSize="16sp"
@@ -32,6 +34,7 @@
 
         <TextView
             android:id="@+id/processedImagesValue"
+            android:textColor="@color/black"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="0"
@@ -47,6 +50,7 @@
 
         <TextView
             android:textStyle="bold"
+            android:textColor="@color/black"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Images moved:"
@@ -54,6 +58,7 @@
             android:paddingEnd="8dp" />
 
         <TextView
+            android:textColor="@color/black"
             android:id="@+id/movedImagesValue"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -69,14 +74,16 @@
         android:paddingBottom="4dp">
 
         <TextView
-            android:textStyle="bold"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:paddingEnd="8dp"
             android:text="Images deleted:"
+            android:textColor="@color/black"
             android:textSize="16sp"
-            android:paddingEnd="8dp" />
+            android:textStyle="bold" />
 
         <TextView
+            android:textColor="@color/black"
             android:id="@+id/deletedImagesValue"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -93,6 +100,7 @@
 
         <TextView
             android:textStyle="bold"
+            android:textColor="@color/black"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Source Folder:"
@@ -101,6 +109,7 @@
 
         <TextView
             android:id="@+id/sourceFolderValue"
+            android:textColor="@color/black"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="N/A"
@@ -116,6 +125,7 @@
 
         <TextView
             android:textStyle="bold"
+            android:textColor="@color/black"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Target Folder:"
@@ -123,6 +133,7 @@
             android:paddingEnd="8dp" />
 
         <TextView
+            android:textColor="@color/black"
             android:id="@+id/targetFolderValue"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"

@@ -39,6 +39,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Picture Name"
+            android:textColor="@color/black"
             android:textSize="18sp"
             android:textStyle="bold"
             android:paddingBottom="8dp"/>
@@ -48,6 +49,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Reason for recommendation or not"
+            android:textColor="@color/black"
             android:textSize="14sp" />
     </LinearLayout>
 

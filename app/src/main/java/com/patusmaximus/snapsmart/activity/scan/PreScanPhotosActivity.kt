@@ -80,20 +80,22 @@ class PreScanPhotosActivity : AppCompatActivity() {
         val imageAnalyzer = ImageAnalyzer(this)
         val scanResult = imageAnalyzer.scanFolder(folderUri)
 
-        // Update the UI based on scan results
         runOnUiThread {
             binding.photoCountTextView.text = scanResult.photoCount.toString()
             binding.processingTimeTextView.text = "${scanResult.estimatedProcessingTime} seconds"
 
-            // Set thumbnails for the first four images
             val thumbnails = scanResult.thumbnails
 
-            if (thumbnails.size > 0) binding.imagePreview1.setImageBitmap(thumbnails[0])
-            if (thumbnails.size > 1) binding.imagePreview2.setImageBitmap(thumbnails[1])
-            if (thumbnails.size > 2) binding.imagePreview3.setImageBitmap(thumbnails[2])
-            if (thumbnails.size > 3) binding.imagePreview4.setImageBitmap(thumbnails[3])
+            // Ensure thumbnails are loaded with proper aspect ratio correction
+            if (thumbnails.isNotEmpty()) {
+                binding.imagePreview1.setImageBitmap(thumbnails[0])
+                if (thumbnails.size > 1) binding.imagePreview2.setImageBitmap(thumbnails[1])
+                if (thumbnails.size > 2) binding.imagePreview3.setImageBitmap(thumbnails[2])
+                if (thumbnails.size > 3) binding.imagePreview4.setImageBitmap(thumbnails[3])
+            }
         }
     }
+
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)

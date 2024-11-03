@@ -2,8 +2,11 @@ import android.content.ContentResolver
 import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
+import android.graphics.Matrix
+import android.media.ExifInterface
 import android.net.Uri
 import android.provider.DocumentsContract
+import android.util.Log
 import androidx.documentfile.provider.DocumentFile
 import com.patusmaximus.snapsmart.imageprocessing.model.FolderScanResult
 import com.patusmaximus.snapsmart.imageprocessing.model.ImageScanResult
@@ -13,6 +16,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import org.tensorflow.lite.Interpreter
 import java.io.FileInputStream
+import java.io.IOException
 import java.nio.ByteBuffer
 import java.nio.ByteOrder
 import java.nio.MappedByteBuffer
@@ -27,11 +31,66 @@ class ImageAnalyzer(context: Context) {
         order(ByteOrder.nativeOrder())
     }
 
-    // Public functions
+    // Method to load and correct image orientation
+    fun loadAndCorrectImage(uri: Uri, targetWidth: Int, targetHeight: Int): Bitmap? {
+        val options = BitmapFactory.Options().apply {
+            inJustDecodeBounds = true
+        }
+
+        contentResolver.openInputStream(uri)?.use {
+            BitmapFactory.decodeStream(it, null, options)
+        }
+
+        options.inSampleSize = calculateInSampleSize(options, targetWidth, targetHeight)
+        options.inJustDecodeBounds = false
+
+        val bitmap = contentResolver.openInputStream(uri)?.use {
+            BitmapFactory.decodeStream(it, null, options)
+        } ?: return null
+
+        return correctImageOrientation(bitmap, uri)
+    }
+
+    private fun correctImageOrientation(bitmap: Bitmap, uri: Uri): Bitmap {
+        var exif: ExifInterface? = null
+        try {
+            contentResolver.openInputStream(uri)?.use { inputStream ->
+                exif = ExifInterface(inputStream)
+            }
+        } catch (e: IOException) {
+            Log.e("ImageAnalyzer", "Error reading EXIF data", e)
+        }
+
+        val orientation = exif?.getAttributeInt(ExifInterface.TAG_ORIENTATION, ExifInterface.ORIENTATION_NORMAL) ?: ExifInterface.ORIENTATION_NORMAL
+        val matrix = Matrix()
+
+        when (orientation) {
+            ExifInterface.ORIENTATION_ROTATE_90 -> matrix.postRotate(90f)
+            ExifInterface.ORIENTATION_ROTATE_180 -> matrix.postRotate(180f)
+            ExifInterface.ORIENTATION_ROTATE_270 -> matrix.postRotate(270f)
+        }
+
+        return Bitmap.createBitmap(bitmap, 0, 0, bitmap.width, bitmap.height, matrix, true)
+    }
+
+    private fun calculateInSampleSize(options: BitmapFactory.Options, reqWidth: Int, reqHeight: Int): Int {
+        val (height: Int, width: Int) = options.outHeight to options.outWidth
+        var inSampleSize = 1
+
+        if (height > reqHeight || width > reqWidth) {
+            val halfHeight = height / 2
+            val halfWidth = width / 2
+
+            while (halfHeight / inSampleSize >= reqHeight && halfWidth / inSampleSize >= reqWidth) {
+                inSampleSize *= 2
+            }
+        }
+
+        return inSampleSize
+    }
 
     // Function to scan a folder
-    fun scanFolder(folderUri: Uri): FolderScanResult
-    {
+    fun scanFolder(folderUri: Uri): FolderScanResult {
         val imageUris = mutableListOf<Uri>()
         val thumbnails = mutableListOf<Bitmap>()
         var photoCount = 0
@@ -64,11 +123,9 @@ class ImageAnalyzer(context: Context) {
                     photoCount++
 
                     if (photoCount <= 4) {
-                        val bitmap = contentResolver.openInputStream(imageUri)?.use { inputStream ->
-                            BitmapFactory.decodeStream(inputStream)
-                        }
+                        val bitmap = loadAndCorrectImage(imageUri, 200, 200)
                         bitmap?.let {
-                            val thumbnail = Bitmap.createScaledBitmap(it, 200, 200, true)
+                            val thumbnail = createThumbnail(it, 200, 200)
                             thumbnails.add(thumbnail)
                         }
                     }
@@ -78,6 +135,25 @@ class ImageAnalyzer(context: Context) {
 
         val estimatedProcessingTime = getEstimatedProcessingTime(totalImages)
         return FolderScanResult(photoCount, thumbnails, estimatedProcessingTime, totalImages)
+    }
+
+
+    // Function to create a thumbnail while maintaining the aspect ratio
+    private fun createThumbnail(bitmap: Bitmap, targetWidth: Int, targetHeight: Int): Bitmap {
+        val aspectRatio = bitmap.width.toFloat() / bitmap.height.toFloat()
+
+        // Calculate the target dimensions while maintaining aspect ratio
+        val (scaledWidth, scaledHeight) = if (bitmap.width >= bitmap.height) {
+            val width = targetWidth
+            val height = (width / aspectRatio).toInt()
+            Pair(width, height)
+        } else {
+            val height = targetHeight
+            val width = (height * aspectRatio).toInt()
+            Pair(width, height)
+        }
+
+        return Bitmap.createScaledBitmap(bitmap, scaledWidth, scaledHeight, true)
     }
 
     // Function to process images with progress status
@@ -107,7 +183,7 @@ class ImageAnalyzer(context: Context) {
 
                 if (mimeType.startsWith("image/")) {
                     val imageUri = DocumentsContract.buildDocumentUriUsingTree(folderUri, documentId)
-                    val bitmap = contentResolver.openInputStream(imageUri)?.use { BitmapFactory.decodeStream(it) }
+                    val bitmap = loadAndCorrectImage(imageUri, inputSize, inputSize)
 
                     bitmap?.let {
                         val imageResult = analyzeImage(it, imageName, imageUri.toString())
@@ -126,16 +202,13 @@ class ImageAnalyzer(context: Context) {
 
     // Function to handle selected images
     fun handleSelectedImages(context: Context, selectedImages: List<ImageScanResult>, deleteImages: List<ImageScanResult>, userScanPreferences: UserScanPreferences?) {
-        // Delete not selected images if the user has chosen to do so
-        if (userScanPreferences?.deleteNotRecommendedPhotos == true)
-        {
+        if (userScanPreferences?.deleteNotRecommendedPhotos == true) {
             deleteImages.forEach { image ->
                 val imageUri = Uri.parse(image.uriString)
                 deleteImage(context, imageUri)
             }
         }
 
-        // Move selected images (if destination folder URI is provided)
         if (userScanPreferences?.destinationFolder != null) {
             selectedImages.forEach { image ->
                 val imageUri = Uri.parse(image.uriString)
@@ -143,9 +216,6 @@ class ImageAnalyzer(context: Context) {
             }
         }
     }
-
-
-    // Private helper functions
 
     // Load the model from assets
     private fun loadModelFile(context: Context, modelFileName: String): MappedByteBuffer {
@@ -189,7 +259,6 @@ class ImageAnalyzer(context: Context) {
             else -> blurModelType.ERROR
         }
 
-        // Calculate initial score of 10, deducting points based on the label
         val calculatedScore = when (label) {
             blurModelType.DEFOCUSED_BLUR -> 2
             blurModelType.MOTION_BLUR -> 5
@@ -199,7 +268,6 @@ class ImageAnalyzer(context: Context) {
 
         return ImageScanResult(imageName, score, label, uriString, calculatedScore)
     }
-
 
     // Function to calculate estimated processing time
     private fun getEstimatedProcessingTime(photoCount: Int): Double {

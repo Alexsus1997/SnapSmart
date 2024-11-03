@@ -1,6 +1,7 @@
 package com.patusmaximus.snapsmart.activity.scan
 
 import ImageAnalyzer
+import ScannedImagesAdapter
 import android.app.Dialog
 import android.content.Intent
 import android.net.Uri
@@ -14,7 +15,6 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.GridLayoutManager
 import com.patusmaximus.snapsmart.R
 import com.patusmaximus.snapsmart.activity.MainActivity
-import com.patusmaximus.snapsmart.adapter.ScannedImagesAdapter
 import com.patusmaximus.snapsmart.databinding.ActivityScanPostscanPhotosBinding
 import com.patusmaximus.snapsmart.imageprocessing.model.ImageScanResult
 import com.patusmaximus.snapsmart.imageprocessing.model.UserScanPreferences
@@ -153,5 +153,4 @@ class PostScanPhotosActivity : AppCompatActivity() {
 
         dialog.show()
     }
-
 }

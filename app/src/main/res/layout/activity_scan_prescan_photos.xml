@@ -46,9 +46,7 @@
                 android:layout_columnWeight="1"
                 android:gravity="center"
                 android:textColor="@android:color/black"
-                android:text="None"
-                />
-
+                android:text="None" />
         </GridLayout>
 
         <!-- Right: 2x2 Image Grid -->
@@ -60,35 +58,40 @@
             android:padding="18dp"
             android:rowCount="2">
 
-            <!-- First Row, First Image -->
+            <!-- Image Thumbnails with centerCrop to maintain aspect ratio -->
             <ImageView
                 android:id="@+id/imagePreview1"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_columnWeight="1"
+                android:layout_rowWeight="1"
                 android:scaleType="centerCrop"
                 android:src="@mipmap/botlogo" />
 
-            <!-- First Row, Second Image -->
             <ImageView
                 android:id="@+id/imagePreview2"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_columnWeight="1"
+                android:layout_rowWeight="1"
                 android:scaleType="centerCrop"
                 android:src="@mipmap/botlogo" />
 
-            <!-- Second Row, First Image -->
             <ImageView
                 android:id="@+id/imagePreview3"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_columnWeight="1"
+                android:layout_rowWeight="1"
                 android:scaleType="centerCrop"
                 android:src="@mipmap/botlogo" />
 
-            <!-- Second Row, Second Image -->
             <ImageView
                 android:id="@+id/imagePreview4"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_columnWeight="1"
+                android:layout_rowWeight="1"
                 android:scaleType="centerCrop"
                 android:src="@mipmap/botlogo" />
         </GridLayout>
@@ -180,6 +183,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_columnWeight="1" />
+
         <LinearLayout
             android:layout_width="0dp"
             android:layout_height="wrap_content"
@@ -191,8 +195,6 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content" />
         </LinearLayout>
-
-
     </GridLayout>
 
     <!-- Move To Folder Section -->
@@ -231,12 +233,9 @@
                 android:layout_height="wrap_content"
                 android:layout_columnWeight="1"
                 android:gravity="center"
-                android:text="None"
-                />
-
+                android:text="None" />
         </GridLayout>
     </GridLayout>
-
 
     <!-- Spacer to push buttons to bottom -->
     <View
@@ -269,5 +268,4 @@
             android:text="Scan Folder"
             android:layout_marginLeft="16dp" />
     </LinearLayout>
-
 </LinearLayout>
