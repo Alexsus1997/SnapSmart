@@ -8,9 +8,9 @@ import android.net.Uri
 import android.provider.DocumentsContract
 import android.util.Log
 import androidx.documentfile.provider.DocumentFile
-import com.patusmaximus.snapsmart.imageprocessing.model.FolderScanResult
-import com.patusmaximus.snapsmart.imageprocessing.model.ImageScanResult
-import com.patusmaximus.snapsmart.imageprocessing.model.UserScanPreferences
+import com.patusmaximus.snapsmart.backend.model.FolderScanResult
+import com.patusmaximus.snapsmart.backend.model.ImageScanResult
+import com.patusmaximus.snapsmart.backend.model.UserScanPreferences
 import com.patusmaximus.snapsmart.model.blurModelType
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext

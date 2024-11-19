@@ -1,19 +1,22 @@
 package com.patusmaximus.snapsmart.activity
 
-import com.patusmaximus.snapsmart.activity.bucketize.ViewCategoriesActivity
 import com.patusmaximus.snapsmart.activity.scan.PreScanPhotosActivity
 import com.patusmaximus.snapsmart.activity.settings.SettingsActivity
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContextCompat
+import com.patusmaximus.snapsmart.activity.bucketize.PreBucketizeActivity
+import com.patusmaximus.snapsmart.backend.model.UserBucketPreferences
 import com.patusmaximus.snapsmart.databinding.ActivityMainBinding
-import com.patusmaximus.snapsmart.imageprocessing.model.UserScanPreferences
+import com.patusmaximus.snapsmart.backend.model.UserScanPreferences
 
 class MainActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityMainBinding
-    private val REQUEST_CODE_PICK_FOLDER = 1
+    private val REQUEST_CODE_PICK_FOLDER_SCAN = 1
+    private val REQUEST_CODE_PICK_FOLDER_BUCKET = 2
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -38,12 +41,13 @@ class MainActivity : AppCompatActivity() {
         binding.scanPhotosButton.setOnClickListener {
             val intent = Intent(Intent.ACTION_OPEN_DOCUMENT_TREE)
             intent.addCategory(Intent.CATEGORY_DEFAULT)
-            startActivityForResult(intent, REQUEST_CODE_PICK_FOLDER)
+            startActivityForResult(intent, REQUEST_CODE_PICK_FOLDER_SCAN)
         }
 
-        binding.viewCategoriesButton.setOnClickListener {
-            val intent = Intent(this, ViewCategoriesActivity::class.java)
-            startActivity(intent)
+        binding.bucketizePhotosButton.setOnClickListener {
+            val intent = Intent(Intent.ACTION_OPEN_DOCUMENT_TREE)
+            intent.addCategory(Intent.CATEGORY_DEFAULT)
+            startActivityForResult(intent, REQUEST_CODE_PICK_FOLDER_BUCKET)
         }
 
         binding.settingsButton.setOnClickListener {
@@ -56,7 +60,7 @@ class MainActivity : AppCompatActivity() {
     {
         super.onActivityResult(requestCode, resultCode, data)
 
-        if (requestCode == REQUEST_CODE_PICK_FOLDER && resultCode == RESULT_OK) {
+        if (resultCode == RESULT_OK) {
             val sourceFolderUri = data?.data
             if (sourceFolderUri != null) {
                 // Take persistable permission
@@ -72,11 +76,21 @@ class MainActivity : AppCompatActivity() {
                 // Use the saved URI in future access
                 println("Persisted folder URI: $sourceFolderUri")
 
-                // Launch Pre scan intent
-                val intent = Intent(this, PreScanPhotosActivity::class.java)
+                // Launch Scan or Bucket activity based on the request code
+                var intent: Intent? = null
+                if (requestCode == REQUEST_CODE_PICK_FOLDER_SCAN)
+                {
+                    intent = Intent(this, PreScanPhotosActivity::class.java)
+                    val userScanPreferences = UserScanPreferences(sourceFolderUri)
+                    intent.putExtra("userScanPreferences", userScanPreferences)
+                }
+                else
+                {
+                    intent = Intent(this, PreBucketizeActivity::class.java)
+                    val userBucketPreferences = UserBucketPreferences(sourceFolderUri)
+                    intent.putExtra("userBucketPreferences", userBucketPreferences)
+                }
 
-                val userScanPreferences = UserScanPreferences(sourceFolderUri)
-                intent.putExtra("userScanPreferences", userScanPreferences)
                 startActivity(intent)
             }
         }

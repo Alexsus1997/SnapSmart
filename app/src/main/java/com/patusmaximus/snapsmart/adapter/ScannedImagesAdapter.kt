@@ -12,7 +12,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.RecyclerView
 import com.patusmaximus.snapsmart.R
 import com.patusmaximus.snapsmart.fragment.ImagePopupDialogFragment
-import com.patusmaximus.snapsmart.imageprocessing.model.ImageScanResult
+import com.patusmaximus.snapsmart.backend.model.ImageScanResult
 import com.patusmaximus.snapsmart.model.blurModelType
 
 class ScannedImagesAdapter(

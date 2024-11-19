@@ -15,32 +15,50 @@
         android:label="@string/app_name"
         android:roundIcon="@mipmap/botlogo_round"
         android:supportsRtl="true"
-        android:theme="@style/Theme.SnapSmart">
+        android:theme="@style/Base.Theme.SnapSmart">
 
         <activity
             android:name=".activity.scan.PreScanPhotosActivity"
+            android:theme="@style/Base.Theme.SnapSmart"
             android:exported="false"/>
         <activity
             android:name=".activity.scan.ScanPhotosActivity"
+            android:theme="@style/Base.Theme.SnapSmart"
             android:exported="false" />
         <activity
             android:name=".activity.scan.PostScanPhotosActivity"
+            android:theme="@style/Base.Theme.SnapSmart"
             android:exported="false" />
         <activity
             android:name=".activity.settings.SettingsActivity"
+            android:theme="@style/Base.Theme.SnapSmart"
             android:exported="false" />
         <activity
-            android:name=".activity.bucketize.ViewCategoriesActivity"
+            android:name=".activity.bucketize.PreBucketizeActivity"
+            android:theme="@style/Base.Theme.SnapSmart"
+            android:exported="false" />
+        <activity
+            android:name=".activity.bucketize.BucketizeActivity"
+            android:theme="@style/Base.Theme.SnapSmart"
+            android:exported="false" />
+        <activity
+            android:name=".activity.bucketize.PostBucketizeActivity"
+            android:theme="@style/Base.Theme.SnapSmart"
+            android:exported="false" />
+        <activity
+            android:name=".activity.bucketize.BucketViewActivity"
+            android:theme="@style/Base.Theme.SnapSmart"
             android:exported="false" />
         <activity
             android:name=".activity.MainActivity"
-            android:exported="true"
-            android:theme="@style/Theme.SnapSmart">
+            android:theme="@style/Base.Theme.SnapSmart"
+            android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
     </application>
+
 
 </manifest>

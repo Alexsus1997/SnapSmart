@@ -1,0 +1,105 @@
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:padding="16dp">
+
+    <!-- Buckets Created -->
+    <TextView
+        android:id="@+id/labelBucketsCreated"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Buckets Created:"
+        android:textSize="16sp"
+        android:textStyle="bold"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <TextView
+        android:id="@+id/valueBucketsCreated"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="0"
+        android:textSize="16sp"
+        app:layout_constraintTop_toTopOf="@+id/labelBucketsCreated"
+        app:layout_constraintStart_toEndOf="@+id/labelBucketsCreated"
+        android:layout_marginStart="8dp" />
+
+    <!-- Images Processed -->
+    <TextView
+        android:id="@+id/labelImagesProcessed"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Images Processed:"
+        android:textSize="16sp"
+        android:textStyle="bold"
+        app:layout_constraintTop_toBottomOf="@id/labelBucketsCreated"
+        app:layout_constraintStart_toStartOf="parent"
+        android:layout_marginTop="8dp" />
+
+    <TextView
+        android:id="@+id/valueImagesProcessed"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="0"
+        android:textSize="16sp"
+        app:layout_constraintTop_toTopOf="@+id/labelImagesProcessed"
+        app:layout_constraintStart_toEndOf="@+id/labelImagesProcessed"
+        android:layout_marginStart="8dp" />
+
+    <!-- Granularity -->
+    <TextView
+        android:id="@+id/labelGranularity"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Granularity:"
+        android:textSize="16sp"
+        android:textStyle="bold"
+        app:layout_constraintTop_toBottomOf="@id/labelImagesProcessed"
+        app:layout_constraintStart_toStartOf="parent"
+        android:layout_marginTop="8dp" />
+
+    <TextView
+        android:id="@+id/valueGranularity"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="N/A"
+        android:textSize="16sp"
+        app:layout_constraintTop_toTopOf="@+id/labelGranularity"
+        app:layout_constraintStart_toEndOf="@+id/labelGranularity"
+        android:layout_marginStart="8dp" />
+
+    <!-- Destination Folder -->
+    <TextView
+        android:id="@+id/labelDestinationFolder"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Destination Folder:"
+        android:textSize="16sp"
+        android:textStyle="bold"
+        app:layout_constraintTop_toBottomOf="@id/labelGranularity"
+        app:layout_constraintStart_toStartOf="parent"
+        android:layout_marginTop="8dp" />
+
+    <TextView
+        android:id="@+id/valueDestinationFolder"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="N/A"
+        android:textColor="@android:color/holo_blue_light"
+        android:textSize="16sp"
+        app:layout_constraintTop_toTopOf="@+id/labelDestinationFolder"
+        app:layout_constraintStart_toEndOf="@+id/labelDestinationFolder"
+        android:layout_marginStart="8dp" />
+
+    <!-- OK Button -->
+    <Button
+        android:id="@+id/summaryOkButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="OK"
+        app:layout_constraintTop_toBottomOf="@id/labelDestinationFolder"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="16dp" />
+</androidx.constraintlayout.widget.ConstraintLayout>

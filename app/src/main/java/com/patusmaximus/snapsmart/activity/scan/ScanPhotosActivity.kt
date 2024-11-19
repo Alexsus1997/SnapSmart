@@ -8,7 +8,7 @@ import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
 import com.patusmaximus.snapsmart.databinding.ActivityScanScanPhotosBinding
-import com.patusmaximus.snapsmart.imageprocessing.model.UserScanPreferences
+import com.patusmaximus.snapsmart.backend.model.UserScanPreferences
 import kotlinx.coroutines.launch
 
 class ScanPhotosActivity : AppCompatActivity() {

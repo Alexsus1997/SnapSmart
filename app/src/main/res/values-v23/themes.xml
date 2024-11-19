@@ -1,9 +1,18 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
-
     <style name="Theme.SnapSmart" parent="Base.Theme.SnapSmart">
-        <!-- Transparent system bars for edge-to-edge. -->
-        <item name="android:navigationBarColor">@android:color/transparent</item>
-        <item name="android:statusBarColor">@android:color/transparent</item>
-        <item name="android:windowLightStatusBar">?attr/isLightTheme</item>
+        <!-- Consistent checkbox styling -->
+        <item name="android:checkboxStyle">@style/CustomCheckbox</item>
+        <item name="colorControlActivated">@color/buttonColor</item> <!-- Tint for border/checkmark -->
+        <item name="colorControlHighlight">@android:color/transparent</item> <!-- No background fill -->
+
+        <!-- Status bar fallback -->
+        <item name="android:statusBarColor">@android:color/black</item>
+        <item name="android:windowLightStatusBar">false</item>
+    </style>
+
+    <!-- Custom Checkbox Style -->
+    <style name="CustomCheckbox" parent="Widget.AppCompat.CompoundButton.CheckBox">
+        <item name="android:buttonTint">@color/buttonColor</item>
+        <item name="android:buttonTintMode">src_in</item>
     </style>
 </resources>

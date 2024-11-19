@@ -1,9 +1,20 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
-    <!-- Base application theme. -->
-    <style name="Base.Theme.SnapSmart" parent="Theme.Material3.DayNight.NoActionBar">
-        <!-- Customize your light theme here. -->
-        <!-- <item name="colorPrimary">@color/my_light_primary</item> -->
+
+    <!-- Base theme -->
+    <style name="Base.Theme.SnapSmart" parent="Theme.AppCompat.DayNight.NoActionBar">
+        <!-- Consistent checkbox styling -->
+        <item name="android:checkboxStyle">@style/CustomCheckbox</item>
+        <item name="colorControlActivated">@color/buttonColor</item> <!-- Checkbox border/checkmark color -->
+        <item name="colorControlHighlight">@android:color/transparent</item> <!-- Removes any background fill -->
+
+        <!-- Status bar colors -->
+        <item name="android:statusBarColor">@android:color/black</item> <!-- Black status bar -->
+        <item name="android:windowLightStatusBar">false</item> <!-- White icons on status bar -->
     </style>
 
-    <style name="Theme.SnapSmart" parent="Base.Theme.SnapSmart" />
+    <!-- Custom Checkbox Style -->
+    <style name="CustomCheckbox" parent="Widget.AppCompat.CompoundButton.CheckBox">
+        <item name="android:buttonTint">@color/buttonColor</item>
+        <item name="android:buttonTintMode">src_in</item>
+    </style>
 </resources>

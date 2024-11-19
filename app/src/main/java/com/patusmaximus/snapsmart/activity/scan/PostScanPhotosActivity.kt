@@ -16,8 +16,8 @@ import androidx.recyclerview.widget.GridLayoutManager
 import com.patusmaximus.snapsmart.R
 import com.patusmaximus.snapsmart.activity.MainActivity
 import com.patusmaximus.snapsmart.databinding.ActivityScanPostscanPhotosBinding
-import com.patusmaximus.snapsmart.imageprocessing.model.ImageScanResult
-import com.patusmaximus.snapsmart.imageprocessing.model.UserScanPreferences
+import com.patusmaximus.snapsmart.backend.model.ImageScanResult
+import com.patusmaximus.snapsmart.backend.model.UserScanPreferences
 import com.patusmaximus.snapsmart.model.blurModelType
 
 class PostScanPhotosActivity : AppCompatActivity() {

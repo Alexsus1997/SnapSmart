@@ -1,4 +1,4 @@
-package com.patusmaximus.snapsmart.imageprocessing.model
+package com.patusmaximus.snapsmart.backend.model
 
 import android.graphics.Bitmap
 
