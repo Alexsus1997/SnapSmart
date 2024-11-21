@@ -1,8 +1,10 @@
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:padding="16dp">
+    android:padding="16dp"
+    android:background="@android:color/white">
 
     <!-- Buckets Created -->
     <TextView
@@ -21,8 +23,8 @@
         android:layout_height="wrap_content"
         android:text="0"
         android:textSize="16sp"
-        app:layout_constraintTop_toTopOf="@+id/labelBucketsCreated"
-        app:layout_constraintStart_toEndOf="@+id/labelBucketsCreated"
+        app:layout_constraintTop_toTopOf="@id/labelBucketsCreated"
+        app:layout_constraintStart_toEndOf="@id/labelBucketsCreated"
         android:layout_marginStart="8dp" />
 
     <!-- Images Processed -->
@@ -43,8 +45,8 @@
         android:layout_height="wrap_content"
         android:text="0"
         android:textSize="16sp"
-        app:layout_constraintTop_toTopOf="@+id/labelImagesProcessed"
-        app:layout_constraintStart_toEndOf="@+id/labelImagesProcessed"
+        app:layout_constraintTop_toTopOf="@id/labelImagesProcessed"
+        app:layout_constraintStart_toEndOf="@id/labelImagesProcessed"
         android:layout_marginStart="8dp" />
 
     <!-- Granularity -->
@@ -65,8 +67,8 @@
         android:layout_height="wrap_content"
         android:text="N/A"
         android:textSize="16sp"
-        app:layout_constraintTop_toTopOf="@+id/labelGranularity"
-        app:layout_constraintStart_toEndOf="@+id/labelGranularity"
+        app:layout_constraintTop_toTopOf="@id/labelGranularity"
+        app:layout_constraintStart_toEndOf="@id/labelGranularity"
         android:layout_marginStart="8dp" />
 
     <!-- Destination Folder -->
@@ -83,14 +85,19 @@
 
     <TextView
         android:id="@+id/valueDestinationFolder"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:text="N/A"
         android:textColor="@android:color/holo_blue_light"
         android:textSize="16sp"
-        app:layout_constraintTop_toTopOf="@+id/labelDestinationFolder"
-        app:layout_constraintStart_toEndOf="@+id/labelDestinationFolder"
-        android:layout_marginStart="8dp" />
+        app:layout_constraintTop_toTopOf="@id/labelDestinationFolder"
+        app:layout_constraintStart_toEndOf="@id/labelDestinationFolder"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:ellipsize="end"
+        android:maxLines="1"
+        android:scrollHorizontally="true"
+        android:layout_marginStart="8dp"
+        android:layout_marginEnd="8dp" />
 
     <!-- OK Button -->
     <Button
@@ -98,7 +105,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="OK"
-        app:layout_constraintTop_toBottomOf="@id/labelDestinationFolder"
+        app:layout_constraintTop_toBottomOf="@id/valueDestinationFolder"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         android:layout_marginTop="16dp" />

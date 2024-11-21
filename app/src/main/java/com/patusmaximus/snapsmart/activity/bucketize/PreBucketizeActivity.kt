@@ -9,7 +9,7 @@ import android.widget.SeekBar
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
-import com.patusmaximus.snapsmart.backend.ImageBucketizer
+import com.patusmaximus.snapsmart.backend.Utilities
 import com.patusmaximus.snapsmart.backend.model.BucketGranularity
 import com.patusmaximus.snapsmart.backend.model.UserBucketPreferences
 import com.patusmaximus.snapsmart.databinding.ActivityBucketizePrebucketizePhotosBinding
@@ -36,7 +36,7 @@ class PreBucketizeActivity : AppCompatActivity() {
         if (userBucketPreferences?.sourceFolder != null) {
 
             val decodedUri = userBucketPreferences?.sourceFolder.toString()
-            val displayUri = decodedUri?.substringAfter("raw:/")
+            val displayUri = Utilities().decodeAndFormatUri(decodedUri)
 
             // Set the selected folder URI in the TextView
             binding.selectedFolderTextView.text = displayUri
@@ -145,7 +145,7 @@ class PreBucketizeActivity : AppCompatActivity() {
                 // Compare if the selected moved folder is different from the selected folder
                 if (destinationFolderUri.toString() != userBucketPreferences?.sourceFolder.toString()) {
                     userBucketPreferences?.destinationFolder = destinationFolderUri
-                    binding.selectedDestinationFolderTextView.text = destinationFolderUri.toString()
+                    binding.selectedDestinationFolderTextView.text = Utilities().decodeAndFormatUri(destinationFolderUri.toString())
                     binding.destinationFolderGrid.visibility = View.VISIBLE
                     toggleProceedButton(true)
 

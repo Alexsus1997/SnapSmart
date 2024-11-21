@@ -6,11 +6,14 @@ import android.net.Uri
 import android.os.Bundle
 import android.provider.DocumentsContract
 import android.util.Log
+import android.view.ViewGroup
 import android.widget.Button
+import android.widget.ProgressBar
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.patusmaximus.snapsmart.R
+import com.patusmaximus.snapsmart.activity.MainActivity
 import com.patusmaximus.snapsmart.adapter.BucketSectionAdapter
 import com.patusmaximus.snapsmart.backend.ImageBucketizer
 import com.patusmaximus.snapsmart.backend.model.BucketGranularity
@@ -35,7 +38,7 @@ class PostBucketizeActivity : AppCompatActivity() {
             ?: BucketGranularity.Day // Default to "Day" if granularity is not provided
 
         // Group buckets by granularity
-        sections = groupBucketsByGranularity(buckets, granularity)
+        sections = ImageBucketizer().groupBucketsByGranularity(buckets, granularity)
 
         // Set up the RecyclerView for sections
         sectionAdapter = BucketSectionAdapter(this, sections) { bucket ->
@@ -55,34 +58,6 @@ class PostBucketizeActivity : AppCompatActivity() {
         }
     }
 
-    private fun groupBucketsByGranularity(
-        buckets: List<ImageBucketizer.Bucket>,
-        granularity: BucketGranularity
-    ): List<BucketSectionAdapter.Section> {
-        val groupedBuckets = when (granularity) {
-            BucketGranularity.Day -> {
-                // Group by month (e.g., "YYYY-MM")
-                buckets.groupBy { it.label.substring(0, 7) }
-            }
-            BucketGranularity.Month -> {
-                // Group by year (e.g., "YYYY")
-                buckets.groupBy { it.label.substring(0, 4) }
-            }
-            BucketGranularity.Year -> {
-                // All buckets in one group labeled as "All Buckets"
-                mapOf("All Buckets" to buckets)
-            }
-        }
-
-        // Convert grouped buckets into sections
-        return groupedBuckets.map { (title, groupedBuckets) ->
-            BucketSectionAdapter.Section(
-                title = title,
-                buckets = groupedBuckets
-            )
-        }
-    }
-
     private fun openBucketView(bucket: ImageBucketizer.Bucket) {
         val intent = Intent(this, BucketViewActivity::class.java)
         intent.putExtra("bucket", bucket)
@@ -94,23 +69,60 @@ class PostBucketizeActivity : AppCompatActivity() {
         val destinationFolder = userPreferences?.destinationFolder
             ?: throw IllegalArgumentException("Destination folder not set")
 
-        // Run the image distribution process
-        val (bucketCount, imagesProcessed) = ImageBucketizer().distributeImagesToBuckets(
-            context = this,
-            destinationFolder = destinationFolder,
-            buckets = sections.flatMap { it.buckets },
-            keepOriginalImages = userPreferences.keepOriginalFiles
-        ) { progress, bucketName, imagesInBucket ->
-            Log.d("PostBucketizeActivity", "Processed bucket: $bucketName with $imagesInBucket images ($progress% complete)")
+        // Create and show progress dialog
+        val progressDialog = Dialog(this).apply {
+            setContentView(R.layout.dialog_image_processing)
+            setCancelable(false)
+            show()
         }
 
-        // Show summary dialog
-        showSummaryDialog(bucketCount, imagesProcessed, userPreferences.granularity, destinationFolder)
+        val circularProgressIndicator = progressDialog.findViewById<com.google.android.material.progressindicator.CircularProgressIndicator>(R.id.circularProgressIndicator)
+        val horizontalProgressBar = progressDialog.findViewById<ProgressBar>(R.id.horizontalProgressBar)
+        val progressPercentageText = progressDialog.findViewById<TextView>(R.id.progressPercentageText)
+        val dynamicImageNameTextView = progressDialog.findViewById<TextView>(R.id.dynamicImageNameTextView)
+
+        // Run the image distribution process in a background thread
+        Thread {
+            try {
+                val (bucketCount, imagesProcessed) = ImageBucketizer().distributeImagesToBuckets(
+                    context = this,
+                    destinationFolder = destinationFolder,
+                    buckets = sections.flatMap { it.buckets },
+                    keepOriginalImages = userPreferences.keepOriginalFiles
+                ) { progress, bucketName, imagesInBucket ->
+                    runOnUiThread {
+                        // Update progress dialog
+                        circularProgressIndicator.progress = progress
+                        horizontalProgressBar.progress = progress
+                        progressPercentageText.text = "$progress%"
+                        dynamicImageNameTextView.text = "Processing: $bucketName ($imagesInBucket images)"
+                    }
+                }
+
+                // Dismiss dialog and show summary once processing is done
+                runOnUiThread {
+                    progressDialog.dismiss()
+                    showSummaryDialog(bucketCount, imagesProcessed, userPreferences.granularity, destinationFolder)
+                }
+            } catch (e: Exception) {
+                runOnUiThread {
+                    progressDialog.dismiss()
+                    Log.e("PostBucketizeActivity", "Error processing images: ${e.message}")
+                }
+            }
+        }.start()
     }
 
+    // Display the summary dialog
     private fun showSummaryDialog(bucketCount: Int, imagesProcessed: Int, granularity: BucketGranularity?, destinationFolder: Uri) {
         val dialog = Dialog(this)
         dialog.setContentView(R.layout.dialog_bucket_bucket_summary)
+
+        // Set dialog width to match parent
+        dialog.window?.setLayout(
+            ViewGroup.LayoutParams.MATCH_PARENT,
+            ViewGroup.LayoutParams.WRAP_CONTENT
+        )
 
         // Populate dialog views
         dialog.findViewById<TextView>(R.id.valueBucketsCreated).text = bucketCount.toString()
@@ -123,34 +135,33 @@ class PostBucketizeActivity : AppCompatActivity() {
         // Handle folder opening
         destinationTextView.setOnClickListener {
             try {
-                // Convert the tree URI to a file path
                 val folderPath = convertTreeUriToFilePath(destinationFolder)
-
                 if (folderPath != null) {
-                    // Use ACTION_VIEW with file:// URI
                     val intent = Intent(Intent.ACTION_VIEW).apply {
                         setDataAndType(Uri.parse("file://$folderPath"), "*/*")
-                        setPackage("com.sec.android.app.myfiles") // Samsung My Files package
+                        setPackage("com.sec.android.app.myfiles")
                         addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION or Intent.FLAG_GRANT_WRITE_URI_PERMISSION)
                     }
-
-                    // Start the intent
                     startActivity(intent)
                 } else {
                     Log.w("PostBucketizeActivity", "Failed to convert URI to file path.")
                 }
             } catch (e: Exception) {
-                Log.e("PostBucketizeActivity", "Error opening folder with My Files: ${e.message}")
+                Log.e("PostBucketizeActivity", "Error opening folder: ${e.message}")
             }
         }
 
         dialog.findViewById<Button>(R.id.summaryOkButton).setOnClickListener {
             dialog.dismiss()
-            finish() // Return to the main activity
+            val intent = Intent(this, MainActivity::class.java)
+            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_NEW_TASK)
+            startActivity(intent)
+            finish()
         }
 
         dialog.show()
     }
+
 
     private fun convertTreeUriToFilePath(uri: Uri): String? {
         // Extract the document ID from the URI
@@ -168,7 +179,4 @@ class PostBucketizeActivity : AppCompatActivity() {
             null // Unsupported or secondary storage
         }
     }
-
-
-
 }
