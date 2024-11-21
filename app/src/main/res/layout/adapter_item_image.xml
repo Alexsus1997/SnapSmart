@@ -3,6 +3,7 @@
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
     android:orientation="vertical"
+    android:background="@color/buttonColor"
     android:padding="8dp">
 
     <!-- Image Thumbnail -->
@@ -18,6 +19,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Image Title"
+        android:textColor="@android:color/white"
         android:textSize="12sp"
         android:paddingTop="4dp" />
 </LinearLayout>

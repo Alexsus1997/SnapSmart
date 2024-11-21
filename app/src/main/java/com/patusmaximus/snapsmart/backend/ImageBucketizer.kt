@@ -24,7 +24,8 @@ class ImageBucketizer {
 
     @Parcelize
     data class Bucket(
-        val label: String,
+        var label: String,
+        val timestamp: String,
         val images: MutableList<ImageData>
     ) : Parcelable
 
@@ -96,7 +97,6 @@ class ImageBucketizer {
     }
 
 
-
     // Function to resize and decode an image URI into a Bitmap
     fun resizeImage(context: Context, uri: Uri, targetWidth: Int, targetHeight: Int): Bitmap? {
         return try {
@@ -156,14 +156,23 @@ class ImageBucketizer {
             else -> throw IllegalArgumentException("Invalid granularity: $granularity")
         }
 
+        val monthNameFormat = SimpleDateFormat("MMMM-yyyy", Locale.getDefault()) // For formatting month names
         val buckets = mutableMapOf<String, Bucket>()
         val totalImages = images.size
 
         for ((index, image) in images.withIndex()) {
             val date = Date(image.timestamp)
-            val label = dateFormat.format(date) // Generate the label based on granularity
+            val timestamp = dateFormat.format(date) // Use the existing format for internal timestamp
 
-            val bucket = buckets.getOrPut(label) { Bucket(label, mutableListOf()) }
+            // Use month names for display if granularity is Month
+            val label = when (granularity) {
+                BucketGranularity.Month -> monthNameFormat.format(date)
+                else -> timestamp // Keep the default timestamp for Day and Year granularities
+            }
+
+            val bucket = buckets.getOrPut(timestamp) {
+                Bucket(label = label, timestamp = timestamp, images = mutableListOf())
+            }
             bucket.images.add(image)
 
             // Update progress
@@ -173,6 +182,7 @@ class ImageBucketizer {
 
         return buckets.values.toList()
     }
+
 
     // Helper function to rotate images using their exif data
     private fun adjustBitmapOrientation(context: Context, uri: Uri, bitmap: Bitmap): Bitmap {
@@ -223,15 +233,15 @@ class ImageBucketizer {
         val groupedBuckets = when (granularity) {
             BucketGranularity.Day -> {
                 // Group by month (e.g., "YYYY-MM")
-                buckets.groupBy { it.label.substring(0, 7) }
+                buckets.groupBy { it.timestamp.substring(0, 7) }
             }
             BucketGranularity.Month -> {
                 // Group by year (e.g., "YYYY")
-                buckets.groupBy { it.label.substring(0, 4) }
+                buckets.groupBy { it.timestamp.substring(0, 4) }
             }
             BucketGranularity.Year -> {
                 // All buckets in one group labeled as "All Buckets"
-                mapOf("All Buckets" to buckets)
+                mapOf("Buckets" to buckets)
             }
         }
 

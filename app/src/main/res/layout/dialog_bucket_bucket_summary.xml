@@ -4,7 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:padding="16dp"
-    android:background="@android:color/white">
+    android:background="@color/appBackground">
 
     <!-- Buckets Created -->
     <TextView
@@ -14,6 +14,7 @@
         android:text="Buckets Created:"
         android:textSize="16sp"
         android:textStyle="bold"
+        android:textColor="@color/black"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
 
@@ -23,6 +24,7 @@
         android:layout_height="wrap_content"
         android:text="0"
         android:textSize="16sp"
+        android:textColor="@color/black"
         app:layout_constraintTop_toTopOf="@id/labelBucketsCreated"
         app:layout_constraintStart_toEndOf="@id/labelBucketsCreated"
         android:layout_marginStart="8dp" />
@@ -35,6 +37,7 @@
         android:text="Images Processed:"
         android:textSize="16sp"
         android:textStyle="bold"
+        android:textColor="@color/black"
         app:layout_constraintTop_toBottomOf="@id/labelBucketsCreated"
         app:layout_constraintStart_toStartOf="parent"
         android:layout_marginTop="8dp" />
@@ -44,6 +47,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="0"
+        android:textColor="@color/black"
         android:textSize="16sp"
         app:layout_constraintTop_toTopOf="@id/labelImagesProcessed"
         app:layout_constraintStart_toEndOf="@id/labelImagesProcessed"
@@ -55,6 +59,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Granularity:"
+        android:textColor="@color/black"
         android:textSize="16sp"
         android:textStyle="bold"
         app:layout_constraintTop_toBottomOf="@id/labelImagesProcessed"
@@ -66,6 +71,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="N/A"
+        android:textColor="@color/black"
         android:textSize="16sp"
         app:layout_constraintTop_toTopOf="@id/labelGranularity"
         app:layout_constraintStart_toEndOf="@id/labelGranularity"
@@ -79,6 +85,7 @@
         android:text="Destination Folder:"
         android:textSize="16sp"
         android:textStyle="bold"
+        android:textColor="@color/black"
         app:layout_constraintTop_toBottomOf="@id/labelGranularity"
         app:layout_constraintStart_toStartOf="parent"
         android:layout_marginTop="8dp" />
@@ -105,6 +112,9 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="OK"
+        android:background="@color/buttonColor"
+        android:textColor="@color/white"
+        android:textSize="16sp"
         app:layout_constraintTop_toBottomOf="@id/valueDestinationFolder"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"

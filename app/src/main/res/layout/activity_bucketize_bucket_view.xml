@@ -5,7 +5,7 @@
     android:layout_height="match_parent"
     xmlns:tools="http://schemas.android.com/tools"
     android:padding="16dp"
-    android:background="@android:color/white"
+    android:background="@color/appBackground"
     tools:context=".activity.bucketize.BucketViewActivity">
 
     <!-- Title -->
@@ -16,6 +16,7 @@
         android:text="Bucket Name"
         android:textSize="24sp"
         android:textStyle="bold"
+        android:textColor="@color/black"
         android:layout_marginBottom="8dp"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
@@ -25,7 +26,7 @@
         android:id="@+id/backButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:background="@color/appBackground"
+        android:background="@color/buttonColor"
         android:text="Back"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
@@ -37,6 +38,7 @@
         android:layout_height="0dp"
         android:layout_marginTop="8dp"
         android:padding="4dp"
+        android:background="@color/buttonColor"
         app:layout_constraintTop_toBottomOf="@id/bucketTitle"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
