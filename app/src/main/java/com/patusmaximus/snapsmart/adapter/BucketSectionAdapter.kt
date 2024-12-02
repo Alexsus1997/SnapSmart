@@ -52,6 +52,7 @@ class BucketSectionAdapter(
             notifyItemChanged(position)
         }
 
+        // Toggle expand/collapse on click
         holder.dropdownIcon.setOnClickListener {
             section.isExpanded = !section.isExpanded
             notifyItemChanged(position)

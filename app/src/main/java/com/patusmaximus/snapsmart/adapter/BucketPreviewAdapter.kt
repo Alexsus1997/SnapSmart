@@ -46,7 +46,8 @@ class BucketPreviewAdapter(
                 if (resizedBitmap != null) {
                     imageView.setImageBitmap(resizedBitmap)
                 } else {
-                    imageView.setImageResource(R.mipmap.botlogo) // Placeholder image
+                    // Use Placeholder image
+                    imageView.setImageResource(R.mipmap.botlogo)
                 }
             } else {
                 imageView.visibility = View.GONE

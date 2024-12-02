@@ -49,12 +49,14 @@ class BucketizeActivity : AppCompatActivity() {
         AlertDialog.Builder(this)
             .setTitle("Cancel Scanning")
             .setMessage("Are you sure you want to cancel the scanning process?")
+            // End the activity if the user confirms
             .setPositiveButton("Yes") { dialog, _ ->
                 dialog.dismiss()
-                finish() // End the activity if the user confirms
+                finish()
             }
+            // Dismiss the dialog if the user declines
             .setNegativeButton("No") { dialog, _ ->
-                dialog.dismiss() // Dismiss the dialog if the user declines
+                dialog.dismiss()
             }
             .create()
             .show()
@@ -83,7 +85,7 @@ class BucketizeActivity : AppCompatActivity() {
                     intent.putExtra("userBucketPreferences", userBucketPreferences)
                     intent.putParcelableArrayListExtra("userBuckets", ArrayList(buckets))
                     startActivity(intent)
-                    finish() // Close this activity
+                    finish()
                 }
             } catch (e: Exception) {
                 withContext(Dispatchers.Main) {

@@ -156,18 +156,19 @@ class ImageBucketizer {
             else -> throw IllegalArgumentException("Invalid granularity: $granularity")
         }
 
-        val monthNameFormat = SimpleDateFormat("MMMM-yyyy", Locale.getDefault()) // For formatting month names
+        val monthNameFormat = SimpleDateFormat("MMMM-yyyy", Locale.getDefault())
         val buckets = mutableMapOf<String, Bucket>()
         val totalImages = images.size
 
-        for ((index, image) in images.withIndex()) {
+        for ((index, image) in images.withIndex())
+        {
             val date = Date(image.timestamp)
-            val timestamp = dateFormat.format(date) // Use the existing format for internal timestamp
+            val timestamp = dateFormat.format(date)
 
             // Use month names for display if granularity is Month
             val label = when (granularity) {
                 BucketGranularity.Month -> monthNameFormat.format(date)
-                else -> timestamp // Keep the default timestamp for Day and Year granularities
+                else -> timestamp
             }
 
             val bucket = buckets.getOrPut(timestamp) {
@@ -203,7 +204,8 @@ class ImageBucketizer {
             } ?: bitmap
         } catch (e: Exception) {
             e.printStackTrace()
-            bitmap // Return the original bitmap if rotation fails
+            // Return the original bitmap if rotation fails
+            bitmap
         }
     }
 

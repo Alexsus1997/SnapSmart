@@ -80,7 +80,7 @@ class ImagePopupDialogFragment : DialogFragment() {
     }
 
     private fun loadDownscaledImage(uri: Uri, imageView: ImageView) {
-        val targetWidth = 1024 // You can adjust this value as per your requirement
+        val targetWidth = 1024
         val targetHeight = 1024
 
         val options = BitmapFactory.Options().apply {

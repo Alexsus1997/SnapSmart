@@ -167,16 +167,17 @@ class PostBucketizeActivity : AppCompatActivity() {
         // Extract the document ID from the URI
         val documentId = DocumentsContract.getTreeDocumentId(uri)
 
-        // Parse the document ID (e.g., "primary:DCIM/SnapSmart/Buckets")
+        // Parse the document ID
         val split = documentId.split(":")
         val type = split[0]
         val path = split.getOrNull(1)
 
         // Build the file path
         return if (type.equals("primary", ignoreCase = true) && path != null) {
-            "/storage/emulated/0/$path" // Path for primary storage
+            "/storage/emulated/0/$path"
         } else {
-            null // Unsupported or secondary storage
+            // Unsupported or secondary storage
+            null
         }
     }
 }
